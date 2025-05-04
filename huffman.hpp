@@ -2,6 +2,9 @@
 #define HUFFMAN_HPP
 // #define HUFFMAN_DEBUG
 
+#include <cstddef>
+#include <deque>
+#include <memory>
 #include <queue>
 #include <string>
 #include <unordered_map>
@@ -83,3 +86,38 @@ private:
 };
 
 #endif
+
+/**
+ * Refactor:
+ */
+
+class HuffmanFile {
+public:
+    std::deque<bool> treeBits;
+    std::deque<char> leaves;
+    std::deque<bool> content;
+
+    std::size_t size();
+};
+
+class HuffmanTree {
+public:
+    HuffmanTree(const std::string& content);
+    HuffmanTree(const HuffmanFile& file);
+
+private:
+    struct TreeNode {
+        char ch;
+        std::shared_ptr<TreeNode> zero;
+        std::shared_ptr<TreeNode> one;
+    };
+
+    std::deque<bool> treeBits;
+    std::deque<char> leaves;
+
+    std::shared_ptr<TreeNode> treePtr;
+
+    void generateTree(const std::string& content);
+    void encodeTree(const std::shared_ptr<TreeNode> treePtr, std::deque<bool>& treeBits, std::deque<char>& leaves) const;
+    std::shared_ptr<TreeNode> decodeTree(std::deque<bool>& treeBits, std::deque<char>& leaves) const;
+};

@@ -236,3 +236,121 @@ void Huffman::deleteTree(EncodingTreeNode* tree) const {
         delete tree;
     }
 }
+
+HuffmanTree::HuffmanTree(const std::string& content) {
+    generateTree(content);
+    encodeTree(treePtr, treeBits, leaves);
+}
+
+HuffmanTree::HuffmanTree(const HuffmanFile& file) {
+    treeBits = file.treeBits;
+    leaves = file.leaves;
+    std::deque tmpTreeBits(treeBits);
+    std::deque tmpLeaves(leaves);
+    decodeTree(tmpTreeBits, tmpLeaves);
+}
+
+void HuffmanTree::generateTree(const std::string& content) {
+    // Package TreeNode with its priority (frequency of appearance).
+    struct PriorityTreeNode {
+        std::shared_ptr<TreeNode> node;
+        int priority;
+    };
+
+    // Compare struct with () operator for std::priority_queue.
+    // Use > to make priority queue see lower value as higher priority.
+    struct CompareNodes {
+        bool operator()(const PriorityTreeNode a, const PriorityTreeNode b) {
+            return a.priority > b.priority;
+        }
+    };
+
+    std::priority_queue<PriorityTreeNode, std::vector<PriorityTreeNode>, CompareNodes> treePQ;
+
+    // Map all characters to their frequencies of appearance.
+    std::unordered_map<char, int>
+        charFreqMap;
+
+    for (const char c : content) {
+        charFreqMap[c] += 1;
+    }
+
+    // Check whether there are more than only one character.
+    if (charFreqMap.size() < 2) {
+        throw std::invalid_argument("Sole character input not allowed!");
+    }
+
+    // Enqueue all characters as simple trees (leaves).
+    for (const auto& pair : charFreqMap) {
+        std::shared_ptr<TreeNode> temp = std::make_shared<TreeNode>();
+        temp->ch = pair.first;
+        temp->zero = nullptr;
+        temp->one = nullptr;
+        treePQ.push({temp, pair.second});
+    }
+
+    // Build tree.
+    while (treePQ.size() != 1) {
+        std::shared_ptr<TreeNode> newTree = std::make_shared<TreeNode>();
+        PriorityTreeNode temp;
+        int newPriority = 0;
+        // Attach zero sub-tree.
+        temp = treePQ.top();
+        treePQ.pop();
+        newTree->zero = temp.node;
+        newPriority += temp.priority;
+
+        // Attach one sub-tree.
+        temp = treePQ.top();
+        treePQ.pop();
+        newTree->one = temp.node;
+        newPriority += temp.priority;
+
+        // Enqueue new tree.
+        treePQ.push({newTree, newPriority});
+    }
+
+    treePtr = treePQ.top().node;
+}
+
+void HuffmanTree::encodeTree(const std::shared_ptr<HuffmanTree::TreeNode> treePtr, std::deque<bool>& treeBits, std::deque<char>& leaves) const {
+    // Clear current encoding.
+    treeBits.clear();
+    leaves.clear();
+    // Base case: tree is a leaf node.
+    if (treePtr->zero == nullptr && treePtr->one == nullptr) {
+        // Append current character to leaves.
+        leaves.push_back(treePtr->ch);
+        // Append 0 to bits.
+        treeBits.push_back(0);
+    } else {
+        // Recursive case: not a leaf node, append encoding of zero and one sub-tree.
+        // Append 1 to bits.
+        treeBits.push_back(1);
+        // Zero sub-tree.
+        encodeTree(treePtr->zero, treeBits, leaves);
+        // One sub-tree.
+        encodeTree(treePtr->one, treeBits, leaves);
+    }
+}
+
+std::shared_ptr<HuffmanTree::TreeNode> HuffmanTree::decodeTree(std::deque<bool>& treeBits, std::deque<char>& leaves) const {
+    std::shared_ptr<TreeNode> temp = std::make_shared<TreeNode>();
+    // Base case: front bit in bits is zero (leaf node).
+    if (treeBits.front() == 0) {
+        // Dequeue 0 from bits.
+        treeBits.pop_front();
+        temp->ch = leaves.front();
+        leaves.pop_front();
+        temp->zero = nullptr;
+        temp->one = nullptr;
+    } else {  // Recursive case: not leaf.
+        // Dequeue 1 from bits.
+        treeBits.pop_front();
+        // Append zero sub-tree.
+        temp->zero = decodeTree(treeBits, leaves);
+        temp->one = decodeTree(treeBits, leaves);
+    }
+
+    return temp;
+}
