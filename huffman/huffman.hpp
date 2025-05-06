@@ -1,6 +1,5 @@
 #ifndef HUFFMAN_HPP
 #define HUFFMAN_HPP
-// #define HUFFMAN_DEBUG
 
 #include <cstddef>
 #include <deque>
@@ -9,13 +8,30 @@
 #include <string>
 #include <unordered_map>
 
+#define HUFFMAN_DEBUG
+
 class HuffmanFile {
-public:
+private:
     std::deque<bool> treeBits;
     std::deque<char> leaves;
     std::deque<bool> content;
+    static std::deque<bool> unpackBits(const std::vector<uint8_t>& bytes, std::size_t bitCount);
 
+public:
+    // Befriend HuffmanTree, HuffmanEncoder, HuffmanDecoder.
+    friend class HuffmanTree;
+    friend class HuffmanEncoder;
+    friend class HuffmanDecoder;
+
+    HuffmanFile();
+    HuffmanFile(const std::string& path);
     std::size_t size() const;
+    void write(const std::string& path);
+#ifdef HUFFMAN_DEBUG
+    std::deque<bool> getTreeBits();
+    std::deque<char> getLeaves();
+    std::deque<bool> getContent();
+#endif
 };
 
 class HuffmanTree {
@@ -27,8 +43,8 @@ public:
     std::deque<char> getLeaves();
 
     void reset();
-    bool isLeaf();
-    char getChar();
+    bool isLeaf() const;
+    char getChar() const;
     bool descend(bool direction);
     void ascend();
 
@@ -48,8 +64,8 @@ private:
     std::deque<std::shared_ptr<TreeNode>> tStack;  // Stack to record previous nodes during traversal.
 
     void generateTree(const std::string& content);
-    void encodeTree(const std::shared_ptr<TreeNode> treePtr, std::deque<bool>& treeBits, std::deque<char>& leaves) const;
-    std::shared_ptr<TreeNode> decodeTree(std::deque<bool>& treeBits, std::deque<char>& leaves) const;
+    static void encodeTree(const std::shared_ptr<TreeNode> treePtr, std::deque<bool>& treeBits, std::deque<char>& leaves);
+    static std::shared_ptr<TreeNode> decodeTree(std::deque<bool>& treeBits, std::deque<char>& leaves);
 };
 
 class HuffmanEncoder {
@@ -76,6 +92,5 @@ private:
 
     void decodeString(std::deque<bool> content);
 };
-
 
 #endif
