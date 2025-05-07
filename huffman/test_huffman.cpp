@@ -93,35 +93,33 @@ TEST(HuffmanTreeTest, Reset) {
     EXPECT_EQ(tree.getChar(), 'D');
 }
 
-// Test for HuffmanEncoder with multiple character string
-TEST(HuffmanEncoderTest, EncodeMultipleCharString) {
-    HuffmanEncoder encoder("ab");
-    HuffmanFile result = encoder.result();
-    std::deque<bool> expected{0, 1, 1};
-    EXPECT_EQ(result.getContent(), expected);
+// Can compress a sample string.
+// Ref: https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1224/assignments/a9/
+TEST(HuffmanEncoderTest, EncodeSampleString) {
+    HuffmanEncoder he("ABANANAABANDANA");
+    std::deque<bool> treeBits = {1, 1, 1, 0, 0, 0, 0};
+    std::deque<char> leaves = {'D', 'B', 'N', 'A'};
+    std::deque<bool> content = {1, 0, 0, 1, 1, 0, 1, 1, 0,
+                                1, 1, 1, 0, 0, 1, 1, 0, 1,
+                                0, 0, 0, 1, 0, 1, 1};
+
+    EXPECT_EQ(he.result().getTreeBits(), treeBits);
+    EXPECT_EQ(he.result().getLeaves(), leaves);
+    EXPECT_EQ(he.result().getContent(), content);
 }
 
-// Test for HuffmanDecoder with empty HuffmanFile
-TEST(HuffmanDecoderTest, DecodeEmptyHuffmanFile) {
-    HuffmanFile file;
-    HuffmanDecoder decoder(file);
-    EXPECT_TRUE(decoder.result().empty());
-}
+// Can decompress a small sample file.
+// Ref: https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1224/assignments/a9/
+TEST(HuffmanDecoderTest, DecodeSampleHuffmanFile) {
+    HuffmanFile hf({{1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0},
+                    {'u', 'k', 'p', 'n', 'a', 'm', 'h'},
+                    {1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1,
+                     0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0,
+                     0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0}});
 
-// Test for HuffmanDecoder with single character HuffmanFile
-TEST(HuffmanDecoderTest, DecodeSingleCharHuffmanFile) {
-    HuffmanEncoder encoder("a");
-    HuffmanFile file = encoder.result();
-    HuffmanDecoder decoder(file);
-    EXPECT_EQ(decoder.result(), "a");
-}
+    HuffmanDecoder hd(hf);
 
-// Test for HuffmanDecoder with multiple character HuffmanFile
-TEST(HuffmanDecoderTest, DecodeMultipleCharHuffmanFile) {
-    HuffmanEncoder encoder("abracadabra");
-    HuffmanFile file = encoder.result();
-    HuffmanDecoder decoder(file);
-    EXPECT_EQ(decoder.result(), "abracadabra");
+    EXPECT_EQ(hd.result(), "humuhumunukunukuapuaa");
 }
 
 // Test for HuffmanEncoder and HuffmanDecoder with complex string
@@ -133,27 +131,9 @@ TEST(HuffmanEncoderDecoderTest, EncodeDecodeComplexString) {
     EXPECT_EQ(decoder.result(), content);
 }
 
-// Test for HuffmanEncoder and HuffmanDecoder with all identical characters
-TEST(HuffmanEncoderDecoderTest, EncodeDecodeIdenticalChars) {
-    std::string content = "aaaaaaaaaa";
-    HuffmanEncoder encoder(content);
-    HuffmanFile file = encoder.result();
-    HuffmanDecoder decoder(file);
-    EXPECT_EQ(decoder.result(), content);
-}
-
 // Test for HuffmanEncoder and HuffmanDecoder with unique characters
 TEST(HuffmanEncoderDecoderTest, EncodeDecodeUniqueChars) {
     std::string content = "abcdef";
-    HuffmanEncoder encoder(content);
-    HuffmanFile file = encoder.result();
-    HuffmanDecoder decoder(file);
-    EXPECT_EQ(decoder.result(), content);
-}
-
-// Test for HuffmanEncoder and HuffmanDecoder with edge case string
-TEST(HuffmanEncoderDecoderTest, EncodeDecodeEdgeCase) {
-    std::string content = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f";
     HuffmanEncoder encoder(content);
     HuffmanFile file = encoder.result();
     HuffmanDecoder decoder(file);

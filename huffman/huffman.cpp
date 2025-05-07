@@ -27,7 +27,7 @@ HuffmanTree::HuffmanTree(const HuffmanFile& file) {
     leaves = file.leaves;
     std::deque tmpTreeBits(treeBits);
     std::deque tmpLeaves(leaves);
-    decodeTree(tmpTreeBits, tmpLeaves);
+    treePtr = decodeTree(tmpTreeBits, tmpLeaves);
     // Initialize traverse pointer.
     ptr = treePtr;
 }
@@ -223,13 +223,17 @@ void HuffmanEncoder::buildCodeMap(std::vector<bool>& code, std::unordered_map<ch
         if (tree.descend(0)) {
             code.push_back(0);
             buildCodeMap(code, codeMap);
-            tree.ascend();  // Backtrack.
+            // Backtrack.
+            code.pop_back();
+            tree.ascend();
         }
 
         if (tree.descend(1)) {
             code.push_back(1);
             buildCodeMap(code, codeMap);
-            tree.ascend();  // Backtrack.
+            // Backtrack.
+            code.pop_back();
+            tree.ascend();
         }
     }
 }
@@ -308,7 +312,7 @@ HuffmanFile::HuffmanFile(const std::string& path) {
 }
 
 std::deque<bool> HuffmanFile::unpackBits(const std::vector<uint8_t>& bytes, std::size_t bitCount) {
-    std::deque<bool> bits(bitCount);
+    std::deque<bool> bits;
     for (std::size_t i = 0; i < bitCount; ++i) {
         std::size_t byteIndex = i / 8;
         std::size_t bitOffset = 7 - (i % 8);
@@ -390,5 +394,13 @@ std::deque<char> HuffmanFile::getLeaves() {
 }
 std::deque<bool> HuffmanFile::getContent() {
     return content;
+}
+
+HuffmanFile::HuffmanFile(std::deque<bool> treeBits,
+                         std::deque<char> leaves,
+                         std::deque<bool> content) {
+    this->treeBits = treeBits;
+    this->leaves = leaves;
+    this->content = content;
 }
 #endif

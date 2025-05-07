@@ -25,5 +25,12 @@ add_executable(test_huffman
     huffman/test_huffman.cpp
     huffman/huffman.cpp
 )
+
+# Debug executable
+add_executable(debug_encode
+    huffman/debug_encode.cpp
+    huffman/huffman.cpp
+)
+
 target_link_libraries(test_huffman PRIVATE gtest gtest_main)
 target_include_directories(test_huffman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

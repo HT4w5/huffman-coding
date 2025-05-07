@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     std::string verb(argv[1]);
     if (verb == "-h" || verb == "--help") {
         printHelp();
-    } else if (verb == "-m" || verb == "--compress") {
+    } else if (verb == "-c" || verb == "--compress") {
         if (argc != 4) {
             std::cerr << "Missing / invalid arguments" << std::endl;
             return EXIT_FAILURE;
@@ -59,7 +59,7 @@ void printHelp() {
     std::cout << "huff - Simple huffman compressor\n"
               << "Params:\n"
               << "huff --help     | -h\n"
-              << "huff --compress | -m  [source] [target]\n"
+              << "huff --compress | -c  [source] [target]\n"
               << "huff --extract  | -x  [source] [target]\n";
 }
 

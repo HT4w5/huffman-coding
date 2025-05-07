@@ -31,6 +31,10 @@ public:
     std::deque<bool> getTreeBits();
     std::deque<char> getLeaves();
     std::deque<bool> getContent();
+
+    HuffmanFile(std::deque<bool> treeBits,
+                std::deque<char> leaves,
+                std::deque<bool> content);
 #endif
 };
 
