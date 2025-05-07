@@ -1,5 +1,0 @@
-huff - Simple huffman compressor
-Params:
-huff --help     | -h
-huff --compress | -c  "/path/to/file"
-huff --extract  | -x  "/path/to/file"
