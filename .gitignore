@@ -1,7 +1,2 @@
-*
-!*.cpp
-!*.hpp
-!.gitignore
-!huffman/
-!CMakeLists.txt
-!README.md
+.vscode/
+build/

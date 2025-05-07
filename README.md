@@ -86,9 +86,13 @@ public:
 };
 ```
 
+## Compression ratio
+
+![eval.png](imgs/eval.png)
+
 ## Citations
 
-A few unit test cases taken from [Stanford CS106B winter 2022 Assignment 9](https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1224/assignments/a9/). See source for details.
+A few unit test cases taken from [Stanford CS106B winter 2022 Assignment 9](). See source for details.
 
 ## License
 
