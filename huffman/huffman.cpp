@@ -1,5 +1,6 @@
 #include "huffman.hpp"
 #include <algorithm>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <queue>

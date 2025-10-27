@@ -2,6 +2,7 @@
 #define HUFFMAN_HPP
 
 #include <cstddef>
+#include <cstdint>
 #include <deque>
 #include <memory>
 #include <queue>
